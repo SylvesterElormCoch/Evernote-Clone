@@ -36,6 +36,7 @@ const styles = theme => ({
     overflowY: 'scroll',
     overflowX: 'hidden'
   },
+
   newNoteInput: {
     width: '100%',
     margin: '0px',
@@ -51,7 +52,10 @@ const styles = theme => ({
     width: '100%',
     backgroundColor: '#28787c',
     borderRadius: '0px',
-    color: 'white'
+    color: 'white',
+    'hover': {
+      backgroundColor: 'rgba(#28787c, 0.6)'
+    }
   }
 });
 

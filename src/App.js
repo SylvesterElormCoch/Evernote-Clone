@@ -17,14 +17,13 @@ class App extends React.Component {
   componentDidMount() {
     firebase
       .firestore()
-      .collection("Notes")
+      .collection("notes")
       .onSnapshot(serverUpdate => {
         const notes = serverUpdate.docs.map(doc => {
           const data = doc.data();
           data["id"] = doc.id;
           return data;
         });
-        console.log(notes);
         this.setState({ notes });
       });
   }
