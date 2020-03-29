@@ -4,11 +4,11 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-const firebase = require(firebase);
-require(firebase/firestore)
+var firebase = require("firebase/app");
+require("firebase/firestore")
 
 var firebaseConfig = {
-    apiKey: "AIzaSyB7t4vcRtPHWMtvLTC0tK9ZXSFdGBTFNJc",
+    apiKey: "ENTER_YOUR_API_KEY",
     authDomain: "evernote-clone-908d1.firebaseapp.com",
     databaseURL: "https://evernote-clone-908d1.firebaseio.com",
     projectId: "evernote-clone-908d1",

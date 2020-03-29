@@ -1,26 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import SideBar from "./sidebar/sidebar";
+import Editor from "./editor/editor";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const firebase = require("firebase");
+
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      selectedNoteIndex: null,
+      selectedNote: null,
+      notes: null
+    };
+  }
+  componentDidMount() {
+    firebase
+      .firestore()
+      .collection("Notes")
+      .onSnapshot(serverUpdate => {
+        const notes = serverUpdate.docs.map(doc => {
+          const data = doc.data();
+          data["id"] = doc.id;
+          return data;
+        });
+        console.log(notes);
+        this.setState({ notes });
+      });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <SideBar
+          selectedNoteIndex={this.state.selectedNoteIndex}
+          notes={this.state.notes}
+        />
+        <Editor />
+      </div>
+    );
+  }
 }
 
 export default App;
