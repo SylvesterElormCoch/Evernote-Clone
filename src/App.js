@@ -14,6 +14,7 @@ class App extends React.Component {
       notes: null
     };
   }
+
   componentDidMount() {
     firebase
       .firestore()
@@ -28,19 +29,67 @@ class App extends React.Component {
       });
   }
 
+  // Manages the state of the currently selected Note
+  selectNote = (note, index) => {
+    this.setState({selectedNote: note, selectedNoteIndex: index });
+  };
+
+  // deletes a note from firebase
+  deleteNote = () => {};
+
+  // Creates a new note, and adds it to firebase
+  newNote = async (title) => {
+    const note = {
+      title,
+      body:''
+    }
+
+    const new_firebase_doc = await firebase.firestore().collection('notes').add({
+      title: note.title,
+      body:note.body,
+      timestamp: firebase.firestore.FieldValue.seververTimestamp()
+    })
+    
+  };
+
+
+  // Updates a given note, specified by the given id
+  noteUpdate = (id, note) =>{
+    firebase
+    .firestore()
+    .collection('notes')
+    .doc(id)
+    .update({
+      title:note.title,
+      body:note.body,
+      timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    })
+    console.log(this.state)
+  }
+
   render() {
-    if (this.state.notes){
+    if (this.state.notes) {
       return (
         <div className="App">
           <SideBar
             selectedNoteIndex={this.state.selectedNoteIndex}
+            deleteNote={this.deleteNote}
+            selectNote={this.selectNote}
+            newNote={this.newNote}
             notes={this.state.notes}
           />
-          <Editor />
+          { this.state.selectedNote ? (
+            <Editor
+              selectedNoteIndex={this.state.selectNoteIndex}
+              selectedNote={this.state.selectedNote}
+              noteUpdate={this.noteUpdate}
+              notes={this.state.notes}
+            />
+          ) : null}
         </div>
       );
-    }else{
-      return <React.Fragment/>
+    } else {
+      return null;
     }
   }
 }
