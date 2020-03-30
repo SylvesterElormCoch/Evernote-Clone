@@ -29,15 +29,19 @@ class App extends React.Component {
   }
 
   render() {
-    return (
-      <div className="App">
-        <SideBar
-          selectedNoteIndex={this.state.selectedNoteIndex}
-          notes={this.state.notes}
-        />
-        <Editor />
-      </div>
-    );
+    if (this.state.notes){
+      return (
+        <div className="App">
+          <SideBar
+            selectedNoteIndex={this.state.selectedNoteIndex}
+            notes={this.state.notes}
+          />
+          <Editor />
+        </div>
+      );
+    }else{
+      return <React.Fragment/>
+    }
   }
 }
 

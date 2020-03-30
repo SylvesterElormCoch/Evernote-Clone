@@ -60,8 +60,9 @@ class SideBar extends React.Component {
                 <div key={index}>
                   <SideBarItem
                     note={note}
-                    selectedNoteIndex={index}
-                    selectedNote={this.selectNote}
+                    index={index}
+                    selectedNoteIndex={selectedNoteIndex}
+                    selectNote={this.selectNote}
                     deleteNote={this.deleteNote}
                   ></SideBarItem>
                   <Divider />
