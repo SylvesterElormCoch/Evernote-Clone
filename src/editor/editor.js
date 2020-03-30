@@ -32,10 +32,35 @@ class Editor extends React.Component {
       });
     }
   }
+
+  update = debounce(() => {
+    this.props.noteUpdate(this.state.id, {
+      title: this.state.title,
+      body: this.state.text
+    });
+  }, 1000);
+
+  updateEditor = async val => {
+    await this.setState({ text: val });
+    this.update();
+  };
+
+  updateTitle = async title => {
+    await this.setState({title});
+    this.update();
+  }
   render() {
     const { classes } = this.props;
     return (
+
       <div className={classes.editorContainer}>
+        <BorderColorIcon className={classes.editIcon}></BorderColorIcon>
+        <input
+       className={classes.titleInput}
+       placeHolder='Note Title'
+       value= {this.state.title ? this.state.title : ''}
+       onChange={(e) => this.updateTitle(e.target.value)}>
+       </input>
         <ReactQuill
           value={this.state.text}
           onChange={this.updateEditor}
@@ -43,18 +68,6 @@ class Editor extends React.Component {
       </div>
     );
   }
-
-  update = debounce(() => {
-    this.props.noteUpdate(this.state.id, {
-      title: this.state.title,
-      body: this.state.text
-    });
-  }, 1500);
-
-  updateEditor = async val => {
-    await this.setState({ text: val });
-    this.update();
-  };
 }
 
 export default withStyles(styles)(Editor);

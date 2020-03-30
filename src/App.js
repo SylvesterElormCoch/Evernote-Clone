@@ -31,41 +31,82 @@ class App extends React.Component {
 
   // Manages the state of the currently selected Note
   selectNote = (note, index) => {
-    this.setState({selectedNote: note, selectedNoteIndex: index });
+    this.setState({ selectedNote: note, selectedNoteIndex: index });
   };
 
   // deletes a note from firebase
-  deleteNote = () => {};
-
-  // Creates a new note, and adds it to firebase
-  newNote = async (title) => {
-    const note = {
-      title,
-      body:''
+  deleteNote = async note => {
+    const noteIndex = this.state.notes.indexOf(note);
+    await this.setState({
+      notes: this.state.notes.filter(_note => _note !== note)
+    });
+    if (this.state.selectedNoteIndex === noteIndex) {
+      this.setState({ selectedNoteIndex: null, selectedNote: null });
+    } else {
+      this.state.notes.length > 1
+        ? this.selectNote(
+            this.state.notes[this.state.selectedNoteIndex - 1],
+            this.state.selectedNoteIndex - 1
+          )
+        : this.setState({ selectedNoteIndex: null, selectedNote: null });
     }
 
-    const new_firebase_doc = await firebase.firestore().collection('notes').add({
-      title: note.title,
-      body:note.body,
-      timestamp: firebase.firestore.FieldValue.seververTimestamp()
-    })
-    
+    firebase
+      .firestore()
+      .collection("notes")
+      .doc(note.id)
+      .delete();
   };
 
+  // Creates a new note, and adds it to firebase
+  newNote = async title => {
+    if (
+      title === null &&
+      !window.confirm("Do you wish to continue without a title?")
+    ) {
+      return;
+    } else {
+      const note = {
+        title,
+        body: ""
+      };
+
+      const new_doc = await firebase
+        .firestore()
+        .collection("notes")
+        .add({
+          title: note.title,
+          body: note.body,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+      console.log(new_doc.id);
+      await this.setState({ notes: [...this.state.notes, new_doc] });
+      const new_doc_index = this.state.notes.indexOf(
+        this.state.notes.filter(note => note.id === new_doc.id)[0]
+      );
+
+      this.setState({
+        selectedNote: this.state.notes[new_doc_index],
+        selectedNoteIndex: new_doc_index
+      });
+      console.log(this.state, new_doc_index);
+    }
+  };
 
   // Updates a given note, specified by the given id
-  noteUpdate = (id, note) =>{
+  noteUpdate = (id, note) => {
     firebase
-    .firestore()
-    .collection('notes')
-    .doc(id)
-    .update({
-      title:note.title,
-      body:note.body,
-      timestamp:firebase.firestore.FieldValue.serverTimestamp()
-    })
-    console.log(this.state)
-  }
+      .firestore()
+      .collection("notes")
+      .doc(id)
+      .update({
+        title: note.title,
+        body: note.body,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    console.log(this.state);
+  };
 
   render() {
     if (this.state.notes) {
@@ -78,7 +119,7 @@ class App extends React.Component {
             newNote={this.newNote}
             notes={this.state.notes}
           />
-          { this.state.selectedNote ? (
+          {this.state.selectedNote ? (
             <Editor
               selectedNoteIndex={this.state.selectNoteIndex}
               selectedNote={this.state.selectedNote}
